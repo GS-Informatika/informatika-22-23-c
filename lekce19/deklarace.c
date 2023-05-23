@@ -1,0 +1,1 @@
+float probability(int num_dice, int min_number_count);
