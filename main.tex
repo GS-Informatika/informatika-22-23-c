@@ -300,7 +300,6 @@
     \begin{center}
         \includegraphics[width=0.9\linewidth]{lekce19/assembler.png}
     \end{center}
-    
 \end{frame}
 
 \section{Kompilace programu v C (podrobněji)}
@@ -702,10 +701,265 @@
     \lstinputlisting[language=C]{lekce20/dereference_assignment01.c}
 \end{frame}
 
+\begin{frame}{Konstantní hodnoty}
+    \begin{block}{Konstanta}
+        \begin{itemize}
+            \item Konstanta je hodnota která se za běhu programu nikdy nezmění
+            \item Deklarujeme pomocí klíčového slova \textit{const}
+        \end{itemize}
+    \end{block}
+    \lstinputlisting[language=C]{lekce21/const.c}
+    \pause
+    \begin{block}{Pointer na const}
+        \begin{itemize}
+            \item Musíme deklarovat že je pointer na konstantu!
+            \item Jinak může dojít k přepsání konstanty (!)
+        \end{itemize}
+    \end{block}
+    \lstinputlisting[language=C]{lekce21/const_ptr.c}
+\end{frame}
+
+\begin{frame}{Konstantní hodnoty}
+    \begin{block}{Pointer na const}
+        \begin{itemize}
+            \item \textit{const int * identifier} deklaruje pointer na konstantní část paměti
+            \item Lze použít i pro "zakázání" mutability uvnitř funkce!
+        \end{itemize}
+    \end{block}
+    \lstinputlisting[language=C]{lekce21/const_func.c}
+\end{frame}
+
+\begin{frame}{Konstantní hodnoty}
+    \begin{block}{Konstantní pointer}
+        \begin{itemize}
+            \item Pointer je také proměnná, která se může reassignovat!
+            \item Můžeme deklarovat konstantní pointer - klíčové slovo const až za "*"
+            \item \textit{const int *} čteme jako "pointer na konstantní int"
+            \item \textit{int * const} čteme jako "konstantní pointer na int"
+            \item Vše před hvězdičkou udává na jaký typ ukazujeme
+        \end{itemize}
+    \end{block}
+    \lstinputlisting[language=C]{lekce21/const_ptr2.c}
+\end{frame}
+
 \begin{frame}{Pole jako ukazatel}
     \begin{block}{Pointer vs array}
-        TBD ...
+        \begin{itemize}
+            \item Pointer je ukazatel na lokaci v paměti + informaci o datech uložených
+            \item Těchto dat ale může být několik za sebou!
+            \item Array je technicky ukazatel na první prvek v paměti (+ informace o celkové velikosti - sizeof)
+            \item Array je \textit{const} - hodnotu ukazatele \textbf{nelze} měnit (nelze "pohnout" s adresou)
+            \item Array v hlavičce funkce je ale jen pointer, array také můžeme přiřazením převést na pointer
+        \end{itemize}
     \end{block}
+\end{frame}
+
+\begin{frame}{Aritmetika pointerů}
+    \begin{block}{Inkrementace a dekrementace pointerů}
+         \begin{itemize}
+            \item Nekonstantní pointer může měnit hodnotu
+            \item Přičtením/odečtením měníme adresu na kterou ukazujeme
+            \item Posouváme se v paměti o délku typu na který pointer ukazuje
+         \end{itemize}
+    \end{block}
+\end{frame}
+
+\begin{frame}{Aritmetika pointerů}
+    \begin{block}{Increment int pointer}
+        \includegraphics[width=0.95\linewidth]{lekce21/int_ptr_increment.png}
+    \end{block}
+    \begin{block}{Increment long pointer}
+        \includegraphics[width=0.95\linewidth]{lekce21/long_ptr_increment.png}
+    \end{block}
+    \pause
+    Adresa se změnila vždy o délku (sizeof) typu!
+\end{frame}
+
+\begin{frame}{Intermezzo: Post/Pre increment/decrement}
+    \begin{block}{Pre-increment/decrement}
+        \begin{itemize}
+            \item Provede úpravu dat v paměti (přičtení/odečtení 1)
+            \item Poté vrátí již upravenou hodnotu
+            \item \textit{++identifier} / \textit{-\,-identifier}
+        \end{itemize}
+    \end{block}
+    \begin{block}{Post-increment/decrement}
+        \begin{itemize}
+            \item Nejprve se vyhodnotí jako momentální hodnota v paměti
+            \item Poté se provede úprava dat v paměti (přištení/odečtení 1)
+            \item \textit(identifier++) / \textit{identifier-\,-}
+        \end{itemize}
+    \end{block}
+    \lstinputlisting[language=C]{lekce21/pre_post_increment.c}
+\end{frame}
+
+\begin{frame}{Aritmetika pointerů}
+    \begin{block}{Porovnávání pointerů}
+        \begin{itemize}
+            \item Pointery můžeme také porovnávat - má smysl při práci
+            s jednou oblastí paměti (bounds checking)
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+\begin{frame}{Aritmetika pointerů}
+    \lstinputlisting[language=C]{lekce21/ptr_arithmetics.c}
+\end{frame}
+
+\begin{frame}{Textová data}
+    \begin{block}{C String}
+        \begin{itemize}
+            \item Pro textová data se v C používá primárně \textit{char} typ
+            \item \textit{char} obsahuje jeden znak (ASCII) - "něco jako 1-String"
+            \item Textový řetězec je reprezentován typem \textit{char array}, resp. \textit{char *}
+            \item Jak program pozná kde string končí? Musíme předávat parametr o délce?
+            \pause
+            \item Každý C String je ukončen speciálním znakem s ASCII hodnotou 0.
+            \item \textit{Null-terminated byte string}
+            \item Když má tedy C string 6 znaků, v paměti je vyhrazena oblast o 1 větší!
+        \end{itemize}
+    \end{block}
+    \lstinputlisting[language=C]{lekce21/c_strings.c}
+\end{frame}
+
+\begin{frame}{Textová data}
+    \includegraphics[width=0.95\linewidth]{lekce21/asciifull.png}
+\end{frame}
+
+\begin{frame}{Textová data}
+    \begin{block}{Funkce pro práci se stringy}
+        \begin{itemize}
+            \item V různých knihovnách
+            \item Include hlavičky - 
+            \textit{string.h},
+            \textit{stdlib.h},
+            \textit{ctype.h} a další
+            \item \href{https://en.cppreference.com/w/c/string/byte}{Seznam C-String funkcí}
+        \end{itemize}
+    \end{block}
+    \begin{block}{strlen}
+        \begin{itemize}
+            \item Jedna z nejdůležitejších funkcí pro práci se stringy - udává
+            počet znaků ve stringu (čte string než narazí na null char)
+        \end{itemize}
+    \end{block}
+    \begin{block}{strcmp}
+        \begin{itemize}
+            \item Porovnávání 2 stringů
+            \item Nelze jen porovnat proměnné! Jsou to pointery!
+            \item \textit{DEMO - string\_cmp\_wrong.c}
+            \item Musí se porovnat charakter po charakteru (to dělá strcmp)
+            \item Výjimky pro compile-time známé stringy (optimalizace)
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+\section{Struktury}
+
+\begin{frame}{Struktury}
+    \begin{block}{Skládání dat}
+        \begin{itemize}
+            \item Nechceme pracovat jen s primitivními daty - přidání struktury
+            \item struct type - kompozitní typ, skládá se z několika jednodušších struktur/primitivů
+        \end{itemize}
+    \end{block}
+    \lstinputlisting[language=C]{lekce21/struct.c}
+\end{frame}
+
+\begin{frame}{Struktury}
+    \begin{block}{Přístup k datům}
+        \begin{itemize}
+            \item Přímý přístup (pomocí member access operátoru \textit{"."})
+            \item Přístup přes pointer (pomocí operátoru \textit{"->"})
+        \end{itemize}
+    \end{block}
+    \lstinputlisting[language=C]{lekce21/struct_access.c}
+\end{frame}
+
+\begin{frame}{Struktury}
+    \begin{block}{Struct jako argument funkce}
+        \begin{itemize}
+            \item Parametry se předávají jako \textbf{value}
+            \item Při předání struktury přímo se předá její \textbf{kopie}
+            \item Pro velké struktury je pass-by-value drahá operace - hodně kopírování
+            \item Předávání pointerem - předá se jen ukazatel na to, kde v paměti struktura je
+            \item Při předání pointerem můžeme modifikovat
+            \item Můžeme opět aplikovat const modifier - nelze pak modifikovat struct memers
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+\begin{frame}{Struktury}
+    \lstinputlisting[language=C]{lekce21/struct_passing.c}
+\end{frame}
+
+\begin{frame}{Struktury}
+    \begin{block}{Inicializační funkce}
+        \begin{itemize}
+            \item Často se setkáme s použitím inicializačních funkcí
+            \item Pomáhají s parametrizací - díky hlavičce funkce lépe vidíme
+            co hodnota znamená
+        \end{itemize}
+    \end{block}
+    \lstinputlisting[language=C]{lekce21/struct_constructor.c}
+\end{frame}
+
+\begin{frame}{Intermezzo: NULL pointer}
+    \begin{block}{NULL}
+        \begin{itemize}
+            \item Obsažen v standardní knihovně, hodnota ((void*)0)
+            \item Neukazuje na žádné místo v paměti!
+            \item Používá se jako "speciální hodnota" nebo inicializační hodnota
+            \item Garantovaná nerovnost s jakýmkoliv pointerem na proměnnou (nebo funkci)
+            \item Dereference NULL pointeru způsobí chybu programu!!!
+            \item Velmi častá (a kritická) chyba v C programech
+        \end{itemize}
+    \end{block}
+    \lstinputlisting[language=C]{lekce21/null_ptr.c}
+\end{frame}
+
+\begin{frame}{Ukázka - linked list}
+    \lstinputlisting[language=C]{lekce21/linked_list.c}
+\end{frame}
+
+\begin{frame}{Ukázka - linked list}
+    Stále není ideální - musíme explicitně říkat v jakém scope žijí prvky listu tím,
+    že je tam deklarujeme - nelze psát \textit{cons(30, cons(20, cons(10, NULL)))}
+    \\
+    Budeme potřebovat dynamickou alokaci paměti - později
+\end{frame}
+
+\begin{frame}{l-value scope}
+    \includegraphics[width=0.99\linewidth]{lekce21/local_variable.png}
+\end{frame}
+
+\begin{frame}{Union}
+    \begin{block}{Union typy}
+        \begin{itemize}
+            \item struct slouží jako product type (stejně jako v BSL/ISL),
+            kombinuje více hodnot do jednoho typu
+            \item V některých případech potřebujeme sum type - předat jednu hodnotu
+            nabývající jednoho z více typů (v ISL např. Maybe Number - Number nebo \#f)
+            \item union typy - deklarují všechny možnosti, realizuje se pouze jedna
+        \end{itemize}
+    \end{block}
+    \lstinputlisting[language=C]{lekce21/union.c}
+\end{frame}
+
+\begin{frame}{Union}
+    \begin{block}{Union typy}
+        \begin{itemize}
+            \item Union typy tedy obsahují pouze jednu z možností (sum type)
+            \item Jak poznat kterou? Obalení do struct s tagem udávající možnost
+            \item Použití tzv. enum typu pro označení možnosti (tag)
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+\section{Dynamická alokace paměti}
+
+\begin{frame}{Dynamická alokace}
+    TBD
 \end{frame}
 
 \end{document}
